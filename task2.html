@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professional Registration Form</title>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('wp.jpg');
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 50px auto;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      border: 1px solid #00f;
+      border-radius: 4px;
+      box-sizing: border-box;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    input[type="submit"] {
+      background-color: #00f;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #001f3f;
+    }
+
+    .confirmation {
+      max-width: 400px;
+      margin: 50px auto;
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+      text-align: center;
+    }
+
+    .g-recaptcha {
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="registrationForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" placeholder="Choose a username" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" placeholder="Enter a strong password" required>
+
+    <label for="confirmPassword">Confirm Password:</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+
+    <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
+
+    <input type="submit" value="Register">
+  </form>
+
+  <!-- Confirmation Page (Hidden by default) -->
+  <div class="confirmation" id="confirmationPage" style="display:none;">
+    <h2>Registration Successful!</h2>
+    <p>Thank you for registering. Your account has been created.</p>
+  </div>
+
+  <script>
+    document.getElementById('registrationForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent form submission
+
+      // Perform form validation and submission logic here
+      var password = document.getElementById('password').value;
+      var confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (password !== confirmPassword) {
+        alert("Password and Confirm Password do not match");
+        return;
+      }
+
+      // For demonstration purposes, show the confirmation page
+      document.getElementById('registrationForm').style.display = 'none';
+      document.getElementById('confirmationPage').style.display = 'block';
+    });
+  </script>
+
+</body>
+</html>
