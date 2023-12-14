@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #282c35; /* Dark background color */
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #343a40; /* Darker container background color */
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #task-container {
+            margin-top: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #454d55; /* Task item background color */
+            border: 1px solid #343a40;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        li:hover {
+            background-color: #59606b; /* Hover effect */
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        #form-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #task-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        #add-task-btn {
+            background-color: #61dafb; /* Button color */
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #add-task-btn:hover {
+            background-color: #0a5a8a; /* Hover effect */
+        }
+
+        .btn-group {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .filter-btn,
+        .clear-btn {
+            background-color: #61dafb; /* Button color */
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .filter-btn:hover,
+        .clear-btn:hover {
+            background-color: #0a5a8a; /* Hover effect */
+        }
+    </style>
+    <title>To-Do List</title>
+</head>
+<body>
+    <div id="todo-container">
+        <h2>To-Do List</h2>
+        <input type="text" id="taskInput" placeholder="New task...">
+        <button onclick="addTask()">Add Task</button>&nbsp;<button onclick="editexistingTask()">Edit Existing Task</button>&nbsp;<button onclick="deleteTask()">Delete Task</button><br>&nbsp;
+
+        <input type="text" id="taskInput" placeholder="New task...">
+        <button onclick="addTask()">Add Task</button>&nbsp;<button onclick="editexistingTask()">Edit Existing Task</button>&nbsp;<button onclick="deleteTask()">Delete Task</button><br>&nbsp;
+        <ul id="taskList"></ul>
+
+        <input type="text" id="taskInput" placeholder="New task...">
+        <button onclick="addTask()">Add Task</button>&nbsp;<button onclick="editexistingTask()">Edit Existing Task</button>&nbsp;<button onclick="deleteTask()">Delete Task</button><br>&nbsp;
+        <ul id="taskList"></ul>
+
+        <input type="text" id="taskInput" placeholder="New task...">
+        <button onclick="addTask()">Add Task</button>&nbsp;<button onclick="editexistingTask()">Edit Existing Task</button>&nbsp;<button onclick="deleteTask()">Delete Task</button><br>&nbsp;
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const taskInput = document.getElementById('task-input');
+            const addTaskBtn = document.getElementById('add-task-btn');
+            const tasksList = document.getElementById('tasks-list');
+
+            // Check local storage for existing tasks
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+            // Load tasks from local storage
+            function loadTasks() {
+                tasksList.innerHTML = '';
+                tasks.forEach(function (task, index) {
+                    createTaskElement(task, index);
+                });
+            }
+
+            // Save tasks to local storage
+            function saveTasks() {
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+            }
+
+            // Create a new task element
+            function createTaskElement(task, index) {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span class="${task.completed ? 'completed' : ''}">${task.text}</span>
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                `;
+
+                // Add event listeners for edit and delete
+                const editBtn = li.querySelector('.edit-btn');
+                const deleteBtn = li.querySelector('.delete-btn');
+
+                editBtn.addEventListener('click', function () {
+                    const newText = prompt('Edit task:', task.text);
+                    if (newText !== null) {
+                        task.text = newText;
+                        saveTasks();
+                        loadTasks();
+                    }
+                });
+
+                deleteBtn.addEventListener('click', function () {
+                    tasks.splice(index, 1);
+                    saveTasks();
+                    loadTasks();
+                });
+
+                tasksList.appendChild(li);
+            }
+
+            // Event listener for adding a new task
+            addTaskBtn.addEventListener('click', function () {
+                const taskText = taskInput.value.trim();
+                if (taskText !== '') {
+                    const newTask = { text: taskText, completed: false };
+                    tasks.push(newTask);
+                    saveTasks();
+                    loadTasks();
+                    taskInput.value = '';
+                }
+            });
+
+            // Load existing tasks on page load
+            loadTasks();
+        });
+
+        // Filter tasks based on their completion status
+        function filterTasks(filter) {
+            const tasksList = document.getElementById('tasks-list');
+            const tasks = Array.from(tasksList.children);
+
+            tasks.forEach(function (task) {
+                const isCompleted = task.querySelector('span').classList.contains('completed');
+
+                switch (filter) {
+                    case 'active':
+                        task.style.display = isCompleted ? 'none' : 'flex';
+                        break;
+                    case 'completed':
+                        task.style.display = isCompleted ? 'flex' : 'none';
+                        break;
+                    default:
+                        task.style.display = 'flex';
+                }
+            });
+        }
+
+        // Clear completed tasks
+        function clearCompletedTasks() {
+            const tasksList = document.getElementById('tasks-list');
+            const completedTasks = Array.from(tasksList.querySelectorAll('.completed'));
+
+            completedTasks.forEach(function (completedTask) {
+                const index = Array.from(tasksList.children).indexOf(completedTask);
+                tasks.splice(index, 1);
+            });
+
+            saveTasks();
+            loadTasks();
+        }
+    </script>
+</body>
+</html>
